@@ -3,6 +3,8 @@
 use App\Http\Controllers\CompletedTaskController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\TaskController;
+use App\Http\Controllers\UserController;
+use App\Models\Task;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -11,8 +13,12 @@ Route::get('/', function () {
 });
 
 Route::get('/dashboard', function (Request $request) {
-    $points = $request->user()->points;
-    return view('dashboard', ['points' => $points]);
+    $user = $request->user();
+    $points = $user->points;
+    $completedTasks = Task::whereHas('completedBy', function ($query) use ($user) {
+        $query->where('user_id', $user->id);
+    })->get();
+    return view('dashboard', ['points' => $points, 'tasks' => $completedTasks]);
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
@@ -43,6 +49,11 @@ Route::middleware('auth')->group(function () {
         ->prefix('completed-tasks')
         ->group(function () {
             Route::post('/{task}', 'store')->name('create');
+        });
+
+    Route::middleware(['role:Admin'])
+        ->group(function () {
+            Route::get('/users', [UserController::class, 'index'])->name('users.index');
         });
 });
 
