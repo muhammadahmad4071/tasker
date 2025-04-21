@@ -25,7 +25,6 @@ Route::middleware('auth')->group(function () {
         ->prefix('tasks')
         ->group(function () {
             Route::get('/', 'index')->name('index');
-            Route::get('/{task}', 'show')->name('show');
 
             Route::middleware(['role:Admin'])
                 ->group(function() {
@@ -35,6 +34,8 @@ Route::middleware('auth')->group(function () {
                     Route::put('/{task}', 'update');
                     Route::delete('/{task}', 'destroy')->name('delete');
                 });
+
+            Route::get('/{task}', 'show')->name('show');
         });
 
     Route::controller(CompletedTaskController::class)
