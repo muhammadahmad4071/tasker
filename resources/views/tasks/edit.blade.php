@@ -1,14 +1,15 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Create Task') }}
+            {{ __('Edit Task') }}
         </h2>
     </x-slot>
 
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <form action="{{ route('tasks.create') }}" method="POST" class="space-y-6">
+            <form action="{{ route('tasks.edit', ['task' => $task]) }}" method="POST" class="space-y-6">
                 @csrf
+                @method('PUT')
                 <!-- Task Name -->
                 <div>
                     <label for="taskName" class="block text-sm font-medium text-gray-700 mb-1">Task Name</label>
@@ -16,6 +17,7 @@
                         type="text"
                         id="taskName"
                         name="name"
+                        value="{{$task->name}}"
                         required
                         class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                         placeholder="Enter task name"
@@ -34,7 +36,7 @@
                         rows="3"
                         class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                         placeholder="Enter task description"
-                    ></textarea>
+                    >{{$task->description}}</textarea>
                     @error('description')
                         <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                     @enderror
@@ -46,6 +48,7 @@
                     <input
                         type="url"
                         id="videoLink"
+                        value="{{$task->video}}"
                         name="video"
                         class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                         placeholder="https://example.com/video"
@@ -62,6 +65,7 @@
                         type="number"
                         id="duration"
                         name="time"
+                        value="{{$task->time}}"
                         min="1"
                         required
                         class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
@@ -79,6 +83,7 @@
                         type="number"
                         id="rewardAmount"
                         name="reward"
+                        value="{{$task->reward}}"
                         min="0"
                         step="0.01"
                         required
@@ -91,7 +96,16 @@
                 </div>
 
                 <!-- Form Actions -->
-                <div class="flex justify-end space-x-3 pt-4">
+                <div class="flex justify-end items-center space-x-3 pt-4">
+                    @if (session('status') === 'task-updated')
+                        <p
+                            x-data="{ show: true }"
+                            x-show="show"
+                            x-transition
+                            x-init="setTimeout(() => show = false, 2000)"
+                            class="text-sm text-gray-600"
+                        >{{ __('Saved.') }}</p>
+                    @endif
                     <a
                         href="{{route('tasks.create')}}"
                         class="px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500 transition-colors"
@@ -102,7 +116,7 @@
                         type="submit"
                         class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
                     >
-                        Create Task
+                        Edit Task
                     </button>
                 </div>
             </form>
