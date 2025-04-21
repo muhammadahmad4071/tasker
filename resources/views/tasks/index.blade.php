@@ -1,0 +1,104 @@
+<x-app-layout>
+    <x-slot name="header">
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+            {{ __('Tasks') }}
+        </h2>
+    </x-slot>
+
+    <div class="py-12">
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+        @role('Admin')
+        <div class="mb-3">
+            <a href="{{route('tasks.create')}}" class="block w-fit py-2 px-8 rounded-lg bg-green-200 text-green-800 transition-colors hover:bg-green-300">Create Task</a>
+        </div>
+        @endrole
+          <div class="overflow-x-auto bg-white rounded-lg shadow">
+            <table class="min-w-full divide-y divide-gray-200">
+              <thead class="bg-gray-50">
+                <tr>
+                  <th
+                    scope="col"
+                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                  >
+                    Name
+                  </th>
+                  <th
+                    scope="col"
+                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                  >
+                    Description
+                  </th>
+                  <th
+                    scope="col"
+                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                  >
+                    Video
+                  </th>
+                  <th
+                    scope="col"
+                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                  >
+                    Duration (sec)
+                  </th>
+                  <th
+                    scope="col"
+                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                  >
+                    Reward
+                  </th>
+                  <th
+                    scope="col"
+                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                  >
+                    Actions
+                  </th>
+                </tr>
+              </thead>
+              <tbody class="bg-white divide-y divide-gray-200">
+                @foreach ($tasks as $task)
+                  <tr class="hover:bg-gray-50 transition-colors">
+                    <td class="px-6 py-4 whitespace-nowrap">
+                      <div class="text-sm font-medium text-gray-900">{{$task->name}}</div>
+                    </td>
+                    <td class="px-6 py-4">
+                      <div class="text-sm text-gray-500 max-w-xs truncate">{{$task->description}}</div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                      <a
+                        href="{{$task->video}}"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="inline-flex items-center text-sm text-blue-600 hover:text-blue-800"
+                      >
+                        <ExternalLink class="h-4 w-4 mr-1" />
+                        Watch
+                      </a>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                      <div class="text-sm text-gray-500">{{$task->duration}}</div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                      <div class="text-sm font-medium text-emerald-600">{{$task->reward}}</div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                      <div class="flex space-x-2">
+                        <button
+                          class="p-1 rounded-full hover:bg-gray-100 text-blue-600 hover:text-blue-800 transition-colors"
+                        >
+                          <Pencil class="h-5 w-5" />
+                        </button>
+                        <button
+                          class="p-1 rounded-full hover:bg-gray-100 text-red-600 hover:text-red-800 transition-colors"
+                        >
+                          <Trash2 class="h-5 w-5" />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                @endforeach
+              </tbody>
+            </table>
+          </div>
+        </div>
+    </div>
+</x-app-layout>
