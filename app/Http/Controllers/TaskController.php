@@ -2,16 +2,32 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\CompletedTask;
 use Illuminate\Http\Request;
 use App\Models\Task;
 
 class TaskController extends Controller
 {
     public function index() {
-        $tasks = Task::get();
+        $user = auth()->user();
+
+        if ($user->hasRole('Admin')) {
+            // Admins get all tasks
+            $tasks = Task::all();
+        } else {
+            // Users get tasks they haven't completed yet
+            $completedTaskIds = CompletedTask::where('user_id', $user->id)
+                ->pluck('task_id');
+
+            $tasks = Task::whereNotIn('id', $completedTaskIds)->get();
+        }
         return view('tasks.index', [
             'tasks' => $tasks
         ]);
+    }
+
+    public function show(Request $request, Task $task) {
+        return view('tasks.show', ['task' => $task]);
     }
 
     public function create() {
