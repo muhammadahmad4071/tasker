@@ -124,6 +124,7 @@
                         <a href="{{route('tasks.index')}}" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500 transition-colors">
                             Back to Tasks
                         </a>
+                        @role('User')
                         @if (!$task->isCompleted(auth()->user()))
                         <form action="{{route('completed-tasks.create', [ 'task'=> $task->id ])}}" method="POST">
                             @csrf
@@ -145,6 +146,7 @@
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-circle-check-icon lucide-circle-check"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>
                             </span>
                         @endif
+                        @endrole
                     </div>
                 </div>
             </div>
@@ -152,7 +154,7 @@
     </div>
 
     <script>
-        const videoUrl = "{{ $task->video }}";
+        const videoUrl = "{{ $task->link }}";
 
         let watchTime = 0;
         const taskTime = {{$task->time}};

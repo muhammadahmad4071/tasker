@@ -10,7 +10,8 @@ class Task extends Model
     protected $fillable = [
         'name',
         'description',
-        'video',
+        'type',
+        'link',
         'reward',
         'time',
     ];
