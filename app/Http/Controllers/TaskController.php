@@ -27,7 +27,14 @@ class TaskController extends Controller
     }
 
     public function show(Request $request, Task $task) {
-        return view('tasks.show', ['task' => $task]);
+        if ($task->type === 'video') {
+            return view('tasks.show-video', ['task' => $task]);
+        }
+        if ($task->type === 'website') {
+            return view('tasks.show-website', ['task' => $task]);
+        }
+
+        return abort(404, "Task type " . $task->type . " not found!");
     }
 
     public function create() {
@@ -40,7 +47,8 @@ class TaskController extends Controller
             'description' => 'required|max:4000',
             'time' => 'required|integer|gt:0',
             'reward' => 'required|numeric|gte:0.1',
-            'video' => 'required|url'
+            'type' => 'required|in:video,website',
+            'link' => 'required|url'
         ]);
 
         Task::create($validated);
@@ -60,7 +68,8 @@ class TaskController extends Controller
             'description' => 'required|max:4000',
             'time' => 'required|integer|gt:0',
             'reward' => 'required|numeric|gte:0.1',
-            'video' => 'required|url'
+            'type' => 'required|in:video,website',
+            'link' => 'required|url'
         ]);
 
         $task->update($validated);
