@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\CompletedTaskController;
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\TaskController;
 use App\Http\Controllers\UserController;
@@ -12,14 +14,7 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/dashboard', function (Request $request) {
-    $user = $request->user();
-    $points = $user->points;
-    $completedTasks = Task::whereHas('completedBy', function ($query) use ($user) {
-        $query->where('user_id', $user->id);
-    })->get();
-    return view('dashboard', ['points' => $points, 'tasks' => $completedTasks]);
-})->middleware(['auth', 'verified'])->name('dashboard');
+Route::get('/dashboard', [DashboardController::class, 'index'])->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -42,6 +37,16 @@ Route::middleware('auth')->group(function () {
                 });
 
             Route::get('/{task}', 'show')->name('show');
+        });
+
+    Route::controller(OrderController::class)
+        ->name('orders.')
+        ->prefix('orders')
+        ->group(function () {
+            Route::get('/', 'index')->name('index');
+            Route::get('/create', 'create')->name('create');
+            Route::post('/create', 'store');
+            Route::delete('/{order}', 'destroy')->name('delete');
         });
 
     Route::controller(CompletedTaskController::class)

@@ -56,4 +56,8 @@ class User extends Authenticatable
     public function tasks(): HasMany {
         return $this->hasMany(CompletedTask::class);
     }
+
+    public function orders(): HasMany {
+        return $this->hasMany(Order::class);
+    }
 }
