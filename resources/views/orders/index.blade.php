@@ -52,7 +52,7 @@
                     scope="col"
                     class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                   >
-                    Actions
+                    Status
                   </th>
                 </tr>
               </thead>
@@ -70,25 +70,67 @@
                     <td class="px-6 py-4 whitespace-nowrap">
                       <div class="text-sm font-medium text-gray-900">{{$order->amount}}</div>
                     </td>
-                    <td class="px-6 py-4">
+                    <td class="px-6 py-4 whitespace-nowrap">
                       <div class="text-sm text-gray-500 max-w-xs truncate">{{$order->url}}</div>
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap">
                       <div class="text-sm text-gray-500">{{$order->created_at->diffForHumans()}}</div>
                     </td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      <div class="flex space-x-2">
-                        <form action="{{route('orders.delete', ['order' => $order])}}" method="POST" class="inline">
-                            @csrf
-                            @method("DELETE")
-                            <button
-                              class="p-1 rounded-full hover:bg-gray-100 text-red-600 hover:text-red-800 transition-colors"
+                    @role('Admin')
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 relative" x-data="{ open: false }">
+                        <button
+                            class="capitalize inline-flex items-center px-4 py-2 bg-white border border-gray-300 rounded-md font-semibold text-xs text-gray-700 uppercase tracking-widest shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-25 transition ease-in-out duration-150"
+                            @click="open = !open"
                             >
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-trash2-icon lucide-trash-2"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/></svg>
-                            </button>
+                            {{$order->status}}
+                            <svg class="-mr-1 ml-2 h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                              <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 10.939l3.71-3.71a.75.75 0 111.06 1.06l-4.24 4.25a.75.75 0 01-1.06 0L5.21 8.27a.75.75 0 01.02-1.06z" clip-rule="evenodd" />
+                            </svg>
+                        </button>
+
+                        <form
+                            method="POST"
+                            action="{{route('orders.updateStatus', [ 'order' => $order ])}}"
+                            x-show="open"
+                            @click.away="open = false"
+                            x-transition
+                            x-ref="statusForm"
+                            class="origin-top-right absolute bg-white rounded border-[1px] mt-2 z-[70] shadow w-32 flex flex-col gap-1 items-center justify-center"
+                        >
+                            @csrf
+                            @method('PATCH')
+                            <input type="hidden" name="status" x-ref="statusInput">
+                            <button class="w-full hover:bg-gray-100 rounded p-1" value="pending" type="submit"
+                                @click="
+                                    $refs.statusInput.value = 'pending';
+                                    $refs.statusForm.submit();
+                                "
+                            >Pending</button>
+                            <button class="w-full hover:bg-gray-100 rounded p-1" value="in-progress" type="submit"
+                                @click="
+                                    $refs.statusInput.value = 'in-progress';
+                                    $refs.statusForm.submit();
+                                "
+                            >In-Progress</button>
+                            <button class="w-full hover:bg-gray-100 rounded p-1" value="completed" type="submit"
+                                @click="
+                                    $refs.statusInput.value = 'completed';
+                                    $refs.statusForm.submit();
+                                "
+                            >Completed</button>
+                            <button class="w-full hover:bg-gray-100 rounded p-1" value="cancelled" type="submit"
+                                @click="
+                                    $refs.statusInput.value = 'cancelled';
+                                    $refs.statusForm.submit();
+                                "
+                            >Cancelled</button>
                         </form>
-                      </div>
                     </td>
+                    @else
+                    <td class="px-6 py-4 whitespace-nowrap">
+                      <div class="text-sm text-gray-500 capitalize">{{$order->status}}</div>
+                    </td>
+                    @endrole
                   </tr>
                 @endforeach
               </tbody>

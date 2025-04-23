@@ -47,6 +47,7 @@ Route::middleware('auth')->group(function () {
             Route::get('/create', 'create')->name('create');
             Route::post('/create', 'store');
             Route::delete('/{order}', 'destroy')->name('delete');
+            Route::patch('/{order}/status', 'updateStatus')->name('updateStatus');
         });
 
     Route::controller(CompletedTaskController::class)

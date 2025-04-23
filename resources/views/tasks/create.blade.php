@@ -47,7 +47,7 @@
                         name="type"
                         class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                     >
-                        <option selected value="videos">YouTube Video</option>
+                        <option selected value="video">YouTube Video</option>
                         <option value="website">Website</option>
                     </select>
                     @error('type')

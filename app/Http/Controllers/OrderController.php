@@ -7,13 +7,23 @@ use Illuminate\Http\Request;
 
 class OrderController extends Controller
 {
+    public function updateStatus(Request $request, Order $order) {
+        $validated = $request->validate([
+            'status' => 'required|in:pending,completed,cancelled,in-progress'
+        ]);
+
+        $order->status = $validated['status'];
+        $order->save();
+        return back();
+    }
+
     public function index() {
         $orders = [];
         $user = auth()->user();
         if ($user->hasRole('Admin')) {
-            $orders = Order::get();
+            $orders = Order::orderBy('created_at', 'desc')->get();
         } else {
-            $orders = $user->orders;
+            $orders = $user->orders()->orderBy('created_at', 'desc')->get();
         }
 
         return view('orders.index', [

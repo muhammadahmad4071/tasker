@@ -15,18 +15,12 @@ class DashboardController extends Controller
         $end = Carbon::now($nlTimezone)->endOfDay()->timezone('UTC');
         $user = $request->user();
         $points = $user->points;
-        $completedTasks = Task::whereHas('completedBy', function ($query) use ($user) {
-            $query->where('user_id', $user->id);
-        })->get();
-
         $completedTaskIds = CompletedTask::where('user_id', $user->id)
             ->pluck('task_id');
+        $totalCount = Task::count();
 
         $pending = Task::whereNotIn('id', $completedTaskIds)->whereBetween('created_at', [$start, $end])->get();
 
-        $todaysCompleted = Task::whereHas('completedBy', function ($query) use ($user) {
-            $query->where('user_id', $user->id);
-        })->whereBetween('created_at', [$start, $end])->get();
-        return view('dashboard', ['points' => $points, 'totalCompletedTasks' => $completedTasks, 'completedTasks' => $todaysCompleted, 'pendingTasks' => $pending]);
+        return view('dashboard', ['points' => $points, 'totalPending' => $totalCount - $completedTaskIds->count(), 'pendingTasks' => $pending]);
     }
 }
