@@ -23,6 +23,7 @@ class CompletedTaskController extends Controller
 
         $points = $user->points;
         $points->value += $task->reward;
+        $points->total += $task->reward;
         $points->save();
 
         return redirect()->route('tasks.index');

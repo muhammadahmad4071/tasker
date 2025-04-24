@@ -9,6 +9,7 @@ class Points extends Model
 {
     protected $fillable = [
         'value',
+        'total',
         'user_id'
     ];
 
