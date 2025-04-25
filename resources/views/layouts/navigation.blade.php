@@ -17,12 +17,15 @@ $user = auth()->user();
 
                 <div class="flex flex-col gap-2 mb-8">
                     <div class="font-bold flex items-center gap-3">
+                        @role('User')
                         <span>{{$user->currentTier()->badge}}</span>
+                        @endrole
                         <span>{{$user->name}}</span>
                     </div>
                     <div>{{$user->email}}</div>
                 </div>
 
+                @role('User')
                 @php
                 $nextTierProgress = $user->nextTierProgress();
                 @endphp
@@ -35,6 +38,7 @@ $user = auth()->user();
                     <small>{{ $nextTierProgress['remaining_tasks'] }} tasks remaining!</small>
                 </div>
                 @endif
+                @endrole
 
 
                 @role('User')
