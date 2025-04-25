@@ -8,7 +8,8 @@ class DailyRewardController extends Controller
 {
     public function update(Request $request) {
         $validated = $request->validate([
-            'day' => 'required|integer|min:0|max:9'
+            'day' => 'required|integer|min:0|max:9',
+            'points' => 'required|integer|min:10'
         ]);
 
         $user = $request->user();
@@ -17,6 +18,12 @@ class DailyRewardController extends Controller
         $claimed[(int)$validated['day']] = 1;
         $dailyReward->claimed = implode("", $claimed);
         $dailyReward->save();
+
+        $points = $user->points;
+
+        $points->total += $validated['points'];
+        $points->value += $validated['points'];
+        $points->save();
 
         return back();
     }
