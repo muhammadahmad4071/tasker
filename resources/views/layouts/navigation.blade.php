@@ -1,3 +1,6 @@
+@php
+$user = auth()->user();
+@endphp
 <nav x-data="{ open: false }" class="bg-white border-b border-gray-100 fixed w-64 h-full left-0">
     <!-- Primary Navigation Menu -->
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -13,19 +16,35 @@
                 <hr class="mb-8" />
 
                 <div class="flex flex-col gap-2 mb-8">
-                    <div class="font-bold">{{auth()->user()->name}}</div>
-                    <div>{{auth()->user()->email}}</div>
+                    <div class="font-bold flex items-center gap-3">
+                        <span>{{$user->currentTier()->badge}}</span>
+                        <span>{{$user->name}}</span>
+                    </div>
+                    <div>{{$user->email}}</div>
                 </div>
+
+                @php
+                $nextTierProgress = $user->nextTierProgress();
+                @endphp
+                @if ($nextTierProgress !== null)
+                <div class="mb-8 flex flex-col gap-1">
+                    <h2 class="font-bold">Next Tier</h2>
+                    <div class="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
+                      <div class="bg-blue-600 h-2.5 rounded-full" style="width: {{ $nextTierProgress['progress'] }}%"></div>
+                    </div>
+                    <small>{{ $nextTierProgress['remaining_tasks'] }} tasks remaining!</small>
+                </div>
+                @endif
 
 
                 @role('User')
                 <div class="mb-8 flex overflow-hidden rounded-lg border-[1px]">
                     <div class="bg-gray-100 text-blue-700 flex flex-col items-center justify-center py-8 w-full">
-                        <h2 class="font-bold">{{ auth()->user()->points?->value ?? 0 }}</h2>
+                        <h2 class="font-bold">{{ $user->points?->value ?? 0 }}</h2>
                         <span class="text-gray-600 text-sm">Points</span>
                     </div>
                     <div class="flex flex-col items-center justify-center py-8 w-full">
-                        <h2 class="font-bold">{{ auth()->user()->orders()->count() }}</h2>
+                        <h2 class="font-bold">{{ $user->orders()->count() }}</h2>
                         <span class="text-gray-600 text-sm">Orders</span>
                     </div>
                 </div>
@@ -54,6 +73,12 @@
                         </span>
                     </x-nav-link>
                     @endrole
+                    <x-nav-link :href="route('tiers.index')" :active="request()->routeIs('tiers.index')">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-goal-icon lucide-goal"><path d="M12 13V2l8 4-8 4"/><path d="M20.561 10.222a9 9 0 1 1-12.55-5.29"/><path d="M8.002 9.997a5 5 0 1 0 8.9 2.02"/></svg>
+                        <span>
+                            {{ __('Tiers') }}
+                        </span>
+                    </x-nav-link>
                     <x-nav-link :href="route('orders.index')" :active="request()->routeIs('orders.index')">
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-list-checks-icon lucide-list-checks"><path d="m3 17 2 2 4-4"/><path d="m3 7 2 2 4-4"/><path d="M13 6h8"/><path d="M13 12h8"/><path d="M13 18h8"/></svg>
                         <span>

@@ -42,7 +42,7 @@ class RegisteredUserController extends Controller
         ]);
 
         $user->points()->create(['value' => 0]);
-
+        $user->dailyReward()->create();
         $user->assignRole('User');
 
         event(new Registered($user));

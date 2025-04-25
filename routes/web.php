@@ -1,10 +1,12 @@
 <?php
 
 use App\Http\Controllers\CompletedTaskController;
+use App\Http\Controllers\DailyRewardController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\TaskController;
+use App\Http\Controllers\TierController;
 use App\Http\Controllers\UserController;
 use App\Models\Task;
 use Illuminate\Http\Request;
@@ -57,9 +59,29 @@ Route::middleware('auth')->group(function () {
             Route::post('/{task}', 'store')->name('create');
         });
 
+    Route::controller(DailyRewardController::class)
+        ->name('daily-reward.')
+        ->prefix('daily-reward')
+        ->group(function () {
+            Route::patch('/', 'update')->name('update');
+        });
+
+    Route::get('/tiers', [TierController::class, 'index'])->name('tiers.index');
+
     Route::middleware(['role:Admin'])
         ->group(function () {
             Route::get('/users', [UserController::class, 'index'])->name('users.index');
+
+            Route::controller(TierController::class)
+                ->name('tiers.')
+                ->prefix('tiers')
+                ->group(function() {
+                    Route::get('/create', 'create')->name('create');
+                    Route::post('/create', 'store');
+                    Route::get('/{tier}/edit', 'edit')->name('edit');
+                    Route::post('/{tier}/edit', 'update');
+                    Route::delete('/{tier}', 'destroy')->name('delete');
+                });
         });
 });
 
